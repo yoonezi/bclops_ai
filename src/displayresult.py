@@ -396,10 +396,10 @@ def getDataFrame(data):
 
     # 데이터프레임 생성
     df = pd.DataFrame({
-        "mean angle": [data["angles_mean"] for data in averages_data],
-        "mean length": [data["length_mean"] for data in averages_data],
-        "mean spacing": [data["spacing_mean"] for data in averages_data],
-        "mean density": [data["density_mean"] for data in averages_data],
+        "평균 각도": [data["angles_mean"] for data in averages_data],
+        "평균 길이": [data["length_mean"] for data in averages_data],
+        "평균 간격": [data["spacing_mean"] for data in averages_data],
+        "평균 밀도": [data["density_mean"] for data in averages_data],
     })
 
     # 데이터프레임의 index 이름을 설정합니다.
@@ -437,6 +437,15 @@ def makeStereonet(data, title = None, option = 1):
         jointstrikes.append(list(map(angleToStrike,jointset["angles"]))) 
     fig = plt.figure(figsize = (8,8))
     ax = fig.add_subplot(111, projection='stereonet')
+    ymin, ymax = ax.get_ylim()
+    xmin, xmax = ax.get_xlim()
+
+    # Create x and y ticks every 10°
+    y_ticks = np.arange(ymin, ymax, np.deg2rad(10))
+    x_ticks = np.arange(ymin, ymax, np.deg2rad(10))
+
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
     if title is not None:
         ax.set_title(title, y=1.25, fontsize=20)
     for i, (strikes, dips) in enumerate(zip(jointdips,jointstrikes)):

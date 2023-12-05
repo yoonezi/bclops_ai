@@ -72,7 +72,7 @@ plt.savefig('stereonetImg.jpg')
 plt.show()
 dataFrame = getDataFrame(data)
 print(dataFrame)
-dataFrame.to_csv("resultData.csv")
+dataFrame.to_csv("resultData.csv",encoding = 'cp949')
 saveDataFrameAsImage(dataFrame, "table.jpg")
 
 stop = time.time()

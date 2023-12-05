@@ -20,7 +20,6 @@ start = time.time()
 img_path = "./url_param.txt" 
 
 # img_url = "https://bclops.s3.ap-northeast-2.amazonaws.com/samples/input_1.png"
-
 img_url1 = "https://bclops.s3.ap-northeast-2.amazonaws.com/input_1.png"
 img_url2 = "https://bclops.s3.ap-northeast-2.amazonaws.com/input_2.png"
 img_url3 = "https://bclops.s3.ap-northeast-2.amazonaws.com/input_3.png"
@@ -51,7 +50,7 @@ original_image = "./evalutate/image/input.png"
 ai_image = evaluate()
 print("ai fin")
 output = imageProcessing(original_image, ai_image)
-cv2.imshow("output", output)
+# cv2.imshow("output", output)
 
 # 카메라팀
 redImage = redImage(output)
@@ -65,7 +64,7 @@ resultImg = drawAll(original_img, data)
 cv2.imwrite("resultimg.jpg", resultImg)
 for i in range(0, len(data)):
     jointset_result = drawJointset(original_img, data, "jointset%d" % i, setnum=i)
-    cv2.imshow("resultimg%d" % i, jointset_result)
+    # cv2.imshow("resultimg%d" % i, jointset_result)
     cv2.imwrite("resultjointset%d.jpg" % i, jointset_result)
 plt.close('all')
 stereonet = makeStereonet(data)

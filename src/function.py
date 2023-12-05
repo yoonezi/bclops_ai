@@ -14,8 +14,14 @@ from evalutate.model import UNet
 from evalutate.net_load import load
 from evalutate.transform import Normalization, ToTensor
 
+import matplotlib
+
+
 
 def evaluate():
+    
+    matplotlib.use('agg')
+    
     ## 환경 세팅
     result_dir = './evalutate/result'
     ckpt_dir = './evalutate/checkpoint'
@@ -96,15 +102,15 @@ def evaluate():
 
         ## 플롯 그리기
         plt.subplot(131)
-        plt.imshow(input, cmap='gray')
+        # plt.imshow(input, cmap='gray')
         plt.title('input')
 
         plt.subplot(132)
-        plt.imshow(output, cmap='gray')
+        # plt.imshow(output, cmap='gray')
         plt.title('output')
 
         plt.subplot(133)
-        plt.imshow(combined_image, cmap='gray')  # 그레이스케일 이미지로 표시
+        # plt.imshow(combined_image, cmap='gray')  # 그레이스케일 이미지로 표시
         plt.title('result')
 
         plt.imsave(os.path.join(return_dir, 'output.png'), combined_image, cmap='gray')

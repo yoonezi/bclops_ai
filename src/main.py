@@ -1,6 +1,7 @@
 import os
 import time
 from io import BytesIO
+import boto3
 
 import cv2
 import requests
@@ -18,6 +19,7 @@ start = time.time()
 ####################################################################################
 ################################## 이미지 경로 #######################################
 img_path = "./url_param.txt" 
+distance_path = "./distance_param.txt"
 
 # img_url = "https://bclops.s3.ap-northeast-2.amazonaws.com/samples/input_1.png"
 img_url1 = "https://bclops.s3.ap-northeast-2.amazonaws.com/input_1.png"
@@ -32,6 +34,10 @@ img_url4 = "https://bclops.s3.ap-northeast-2.amazonaws.com/input_4.png"
 with open(img_path , 'r') as file:
     img_url = file.read().strip() 
 
+# 거리 값을 파일에서 읽어옴
+with open(distance_path, 'r') as file:
+    distance = int(file.read().strip()) 
+
 # URL에서 이미지를 가져와 처리
 response = requests.get(img_url)
 
@@ -40,7 +46,7 @@ img = img.resize((1024, 512))
 
 save_dir = './evaluate/image/'
 if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
+    os.makedirs(save_dir) 
 
 
 # 이미지를 저장
@@ -55,7 +61,6 @@ output = imageProcessing(original_image, ai_image)
 # 카메라팀
 redImage = redImage(output)
 jointPoint = getLine(redImage)
-distance = 100
 data = make_data(jointPoint, distance)
 
 original_img = cv2.imread(original_image)
@@ -73,15 +78,60 @@ plt.show()
 dataFrame = getDataFrame(data)
 print(dataFrame)
 dataFrame.to_csv("resultData.csv",encoding = 'cp949')
-saveDataFrameAsImage(dataFrame, "table.jpg")
+#saveDataFrameAsImage(dataFrame, "table.jpg")
 
 stop = time.time()
 print("testing time :", round(stop - start, 3), "ms")
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-print("testing time :", round(stop - start, 3), "ms")
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
+
+
+
+def s3_connection():
+    try:
+        # s3 클라이언트 생성
+        s3 = boto3.client(
+            service_name="s3",
+            region_name="ap-northeast-2",
+            aws_access_key_id="AKIAUIEWUIZJESU2UOGW",
+            aws_secret_access_key="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",
+        )
+    except Exception as e:
+       print("Error connecting to S3:", e)
+       return None
+    else:
+        print("s3 bucket connected!") 
+        return s3
+print("Calling s3_connection function...")     
+s3 = s3_connection()
+print("s3_connection function called.")
+import boto3
+
+
+# 업로드할 파일 목록
+files_to_upload = [
+    'redImg.jpg', 
+    'resultimg.jpg', 
+    'resultData.csv', 
+    'resultJoint0.jpg', 
+    'resultjointset0.jpg', 
+    'resultline.jpg', 
+    'stereonetImg.jpg'
+]
+
+# S3 버킷 이름
+bucket_name = 'bclopss3'
+
+# 현재 시간을 타임스탬프 형식으로 가져옵니다.
+timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+# 파일 업로드
+for file_name in files_to_upload:
+    # 파일 이름에 타임스탬프를 추가합니다.
+    unique_file_name = f"{timestamp}_{file_name}"
+    s3.upload_file(file_name, bucket_name, unique_file_name)
+    print(f'Uploaded {file_name} as {unique_file_name}')
+
 
 # [
 #     {
